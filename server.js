@@ -9,30 +9,38 @@ const server = http.createServer((req, res) => {
   });
 
   req.on("end", () => {
+    let resBody;
+    console.log(req.headers['content-type'])
+    if(req.headers['content-type'] === 'application/json') {
+      resBody = JSON.parse(reqBody);
+    } else if(req.headers['content-type'] === 'application/x-www-form-urlencoded') {
+      resBody = decodeURIComponent(reqBody);
+    }
     // Parse the body of the request as JSON if Content-Type header is
       // application/json
     // Parse the body of the request as x-www-form-urlencoded if Content-Type
       // header is x-www-form-urlencoded
     if (reqBody) {
-      req.body = reqBody
-        .split("&")
-        .map((keyValuePair) => keyValuePair.split("="))
-        .map(([key, value]) => [key, value.replace(/\+/g, " ")])
-        .map(([key, value]) => [key, decodeURIComponent(value)])
-        .reduce((acc, [key, value]) => {
-          acc[key] = value;
-          return acc;
-        }, {});
+      // req.body = reqBody
+      //   .split("&")
+      //   .map((keyValuePair) => keyValuePair.split("="))
+      //   .map(([key, value]) => [key, value.replace(/\+/g, " ")])
+      //   .map(([key, value]) => [key, decodeURIComponent(value)])
+      //   .reduce((acc, [key, value]) => {
+      //     acc[key] = value;
+      //     return acc;
+      //   }, {});
 
       // Log the body of the request to the terminal
-      console.log(req.body);
+      console.log(resBody);
     }
 
-    const resBody = {
-      "Hello": "World!"
-    };
+    // const resBody = {
+    //   "Hello": "World!"
+    // };
 
     // Return the `resBody` object as JSON in the body of the response
+    res.end(JSON.stringify(resBody))
   });
 });
 
